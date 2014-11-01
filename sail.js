@@ -112,8 +112,9 @@
         var factory = mod.factory;
         var exports;
         if (isFunction(factory)) {
+            mod.exports = {};
             setCurrentModule(mod);
-            exports = factory();
+            exports = factory(require, mod.exports, mod);
             setCurrentModule();
         } else {
             exports = factory;
