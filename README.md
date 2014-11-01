@@ -1,9 +1,9 @@
 sail
 ====
 
-CMD Context
+CMD Environment
 
-### Fetures
+### features
 * support global `require`, `exports`, `module`
 * no need wrap with `define`
 * not a loader, but will
@@ -39,6 +39,7 @@ var $ = require('./jquery');
 module.exports = function () {
   console.log($.jquery);
 };
+
 ```
 
 In script `./b.js`
@@ -52,5 +53,17 @@ module.exports = "all is ok";
 
 ```
 
-Just for a environment, will work with same tools like `transform`, `concat`, `uglify`
+Also support module wrapped by `define`
+
+```
+define(function () {
+  var a = require('a');
+  var b = require('b');
+  
+  // exports
+  return {};
+});
+```
+
+Just for a environment at this time, shoud work with same tools like `transform`, `concat`, `uglify`
 
