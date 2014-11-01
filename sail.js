@@ -140,9 +140,8 @@
     var currentModule, currentModuleSetted, currentReference;
     function getCurrentModule() {
         if (!currentModuleSetted) {
-            var id = resolve(getId()),
-                m = cachedModules[id];
-            currentModule = m || define(id, {})();
+            var id = resolve(getId());
+            currentModule = cachedModules[id] || define(id, {})();
         }
         return currentModule;
     }
