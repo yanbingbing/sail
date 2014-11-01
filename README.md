@@ -5,7 +5,7 @@ CMD Environment
 
 ### features
 * support global `require`, `exports`, `module`
-* no need wrap with `define`
+* no need wrap by `define`
 * not a loader, but will
 
 ### Usage
@@ -65,5 +65,4 @@ define(function () {
 });
 ```
 
-Just for a environment at this time, shoud work with same tools like `transform`, `concat`, `uglify`
-
+Just a CMD environment at this time, shoud work with same tools like `file-deps`, `transform`, `concat`, `uglify`, etc.
