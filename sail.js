@@ -14,9 +14,10 @@
     function dirname(path) {
         return (RE_DIRNAME.exec(path) || ['./'])[0];
     }
-    var cwd = dirname(global.location.href);
-    var root = (/^.*?\/\/.*?\//.exec(cwd) || 0)[0];
-    var cachedModules = {}, alias = {}, base = cwd;
+    var CWD = dirname(global.location.href);
+    var ROOT = (/^.*?\/\/.*?\//.exec(CWD) || 0)[0];
+
+    var cachedModules = {}, alias = {}, base = CWD;
     var toString = cachedModules.toString;
 
     function isFunction(obj) {
@@ -45,22 +46,22 @@
     }
 
 
-    var RE_ABSOLUTE = /^\/\/.|:\//;
+    var RE_ABSOLUTE = /^\/\/.|:\//, protocol = global.location.protocol;
     function addBase(id, ref) {
         var ret;
         var first = id[0];
 
         // Absolute
         if (RE_ABSOLUTE.test(id)) {
-            ret = id;
+            ret = first === "/" ? (protocol + id) : id;
         }
         // Relative
         else if (first === ".") {
-            ret = (ref ? dirname(ref) : cwd) + id;
+            ret = (ref ? dirname(ref) : CWD) + id;
         }
         // Root
         else if (first === "/") {
-            ret = root ? (root + id.substring(1)) : id;
+            ret = ROOT ? (ROOT + id.substring(1)) : id;
         }
         // Top-level
         else {
@@ -92,11 +93,9 @@
         return addBase(id, ref);
     }
 
-    function Module(id, factory) {
-        this.id = id;
-        this.uri = id;
+    function Module(uri, factory) {
+        this.uri = uri;
         this.factory = factory;
-        this.exports = null;
         this.status = 0;
         cachedModules[this.uri] = this;
     }
@@ -109,15 +108,21 @@
 
         mod.status = 1;
         mod.exports = {};
+
         var exports = mod.factory;
+        
         if (isFunction(exports)) {
             setCurrentModule(mod);
             exports = exports(require, mod.exports, mod);
             setCurrentModule();
         }
+
         if (exports !== undefined) {
             mod.exports = exports;
         }
+
+        delete mod.factory；
+
         mod.status = 2;
 
         return mod.exports;
