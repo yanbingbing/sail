@@ -46,7 +46,7 @@
 
 
     var RE_ABSOLUTE = /^\/\/.|:\//;
-    function addBase(id, refUri) {
+    function addBase(id, ref) {
         var ret;
         var first = id[0];
 
@@ -56,7 +56,7 @@
         }
         // Relative
         else if (first === ".") {
-            ret = (refUri ? dirname(refUri) : cwd) + id;
+            ret = (ref ? dirname(ref) : cwd) + id;
         }
         // Root
         else if (first === "/") {
@@ -108,18 +108,13 @@
         }
 
         mod.status = 1;
-
-        var factory = mod.factory;
-        var exports;
-        if (isFunction(factory)) {
-            mod.exports = {};
+        mod.exports = {};
+        var exports = mod.factory;
+        if (isFunction(exports)) {
             setCurrentModule(mod);
-            exports = factory(require, mod.exports, mod);
+            exports = exports(require, mod.exports, mod);
             setCurrentModule();
-        } else {
-            exports = factory;
         }
-
         if (exports !== undefined) {
             mod.exports = exports;
         }
@@ -156,17 +151,9 @@
         }
     }
     defineGetter('module', getCurrentModule);
-
     defineGetter('exports', function () {
         var module = getCurrentModule();
-        if (module) {
-            if (!('exports' in module)) {
-                module.exports = {};
-            }
-            return module.exports;
-        } else {
-            return null;
-        }
+        return module ? module.exports : null;
     });
 
     function getCurrentScript(_) {
